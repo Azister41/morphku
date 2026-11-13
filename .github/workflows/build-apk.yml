@@ -38,8 +38,13 @@ jobs:
           GRADLE
       - name: Ganti ikon aplikasi
         run: |
-          if [ -f assets/icon.png ]; then
-            npx @capacitor/assets generate --android --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          if [ -f icon.png ]; then
+            mkdir -p assets
+            convert icon.png -resize 1024x1024 -background white -gravity center -extent 1024x1024 assets/icon.png
+            npx @capacitor/assets generate --android --iconBackgroundColor '#0d1117' --iconBackgroundColorDark '#0d1117'
+          else
+            echo "icon.png tidak ditemukan"
+            exit 1
           fi
       - name: Build APK
         run: |
