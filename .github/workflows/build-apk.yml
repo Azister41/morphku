@@ -24,7 +24,7 @@ jobs:
         run: |
           npm init -y
           npm i @capacitor/core @capacitor/cli @capacitor/android
-          npm install @codetrix-studio/capacitor-google-auth --legacy-peer-deps
+          npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @codetrix-studio/capacitor-google-auth
           mkdir -p /tmp/www
           rsync -a --exclude node_modules --exclude android --exclude .git --exclude .github . /tmp/www/
           mv /tmp/www www
@@ -38,7 +38,7 @@ jobs:
             "plugins": {
               "GoogleAuth": {
                 "scopes": ["profile", "email"],
-                "serverClientId": "700052296839-rvmkvrcl2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
+                "serverClientId": "703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
                 "forceCodeForRefreshToken": true
               }
             }
@@ -48,7 +48,8 @@ jobs:
           npx cap add android
           npx cap sync android
           
-          sed -i '/<\/resources>/i \    <string name="server_client_id">700052296839-rvmkvrcl2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com<\/string>' android/app/src/main/res/values/strings.xml
+          sed -i '/<\/resources>/i \    <string name="server_client_id">703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com<\/string>' android/app/src/main/res/values/strings.xml
+
 
       - name: Perbaiki duplikat Kotlin
         run: |
@@ -71,26 +72,14 @@ jobs:
             exit 1
           fi
 
-      - name: Buat Keystore Baru di GitHub
-        run: |
-          keytool -genkey -v -keystore android/app/morphku.keystore -alias morphku -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Az Ister, OU=Morphku, O=Morphku, L=Semarang, ST=Jateng, C=ID" -storepass 123456 -keypass 123456
-          echo "======================================"
-          echo "COPY KODE SHA-1 DI BAWAH INI:"
-          keytool -list -v -keystore android/app/morphku.keystore -alias morphku -storepass 123456 | grep "SHA1:"
-          echo "======================================"
-
-      - name: Build APK Release
+      - name: Build APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=morphku.keystore \
-            -Pandroid.injected.signing.store.password=123456 \
-            -Pandroid.injected.signing.key.alias=morphku \
-            -Pandroid.injected.signing.key.password=123456
+          ./gradlew assembleDebug
 
       - name: Ganti nama APK
-        run: cp android/app/build/outputs/apk/release/app-release.apk morphku.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk morphku.apk
 
       - name: Upload ke Release
         uses: softprops/action-gh-release@v2
