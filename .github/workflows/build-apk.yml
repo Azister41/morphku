@@ -10,49 +10,57 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
+
       - name: Siapkan Capacitor
         run: |
           npm init -y
           npm i @capacitor/core @capacitor/cli @capacitor/android
           mkdir -p /tmp/www
-          rsync -a --exclude node_modules --exclude android --exclude .git --exclude .github --exclude 'package*.json' ./ /tmp/www/
+          rsync -a --exclude node_modules --exclude android --exclude .git --exclude .github . /tmp/www/
           mv /tmp/www www
           npx cap init Morphku com.azister41.morphku --web-dir=www
           npx cap add android
           npx cap sync android
+
       - name: Perbaiki duplikat Kotlin
         run: |
-          cat >> android/app/build.gradle <<'GRADLE'
+          echo "configurations.all {" >> android/app/build.gradle
+          echo "    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'" >> android/app/build.gradle
+          echo "    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'" >> android/app/build.gradle
+          echo "}" >> android/app/build.gradle
 
-          configurations.all {
-              exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-              exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-          }
-          GRADLE
+      - name: Install ImageMagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
+
       - name: Ganti ikon aplikasi
         run: |
           if [ -f icon.png ]; then
             mkdir -p assets
             convert icon.png -resize 1024x1024 -background white -gravity center -extent 1024x1024 assets/icon.png
-            npx @capacitor/assets generate --android --iconBackgroundColor '#0d1117' --iconBackgroundColorDark '#0d1117'
+            npx @capacitor/assets generate --android --iconBackgroundColor '#0d1117'
           else
             echo "icon.png tidak ditemukan"
             exit 1
           fi
+
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
       - name: Ganti nama APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk morphku.apk
+
       - name: Upload ke Release
         uses: softprops/action-gh-release@v2
         with:
