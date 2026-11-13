@@ -410,6 +410,25 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
   <div class="acts" id="spsw" style="margin:0 0 10px"><button class="btn" data-spsw="leopard" data-sp="leopard" type="button" aria-pressed="true">Leopard Gecko</button><button class="btn" data-spsw="ball" data-sp="ball" type="button" aria-pressed="false">Ball Python</button></div>
   <div id="parents"></div>
   <button class="cta" id="go">Hitung peluang anakan</button>
+  <!-- TOMBOL AI PRO -->
+<button onclick="bukaAI()" style="width:100%;margin-top:10px;padding:14px;border-radius:14px;border:2px dashed #E8A020;background:#FFF8E6;font-weight:bold;cursor:pointer">
+  ✨ Hitung Morph Lain (AI) - PRO 🔒
+</button>
+
+<div id="aiBox" style="display:none;margin-top:12px;padding:14px;background:#FFF8E6;border-radius:14px">
+  <b>AI Kalkulator Morph</b><br>
+  <small>Ketik morph bebas, diluar 12 yang ada di atas.</small><br><br>
+  <select id="aiSpesies" style="width:100%;padding:10px;border-radius:10px">
+    <option value="Leopard Gecko">Leopard Gecko</option>
+    <option value="Ball Python">Ball Python</option>
+  </select><br><br>
+  <input id="aiJantan" placeholder="Contoh: Black Night Mack Snow" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
+  <input id="aiBetina" placeholder="Contoh: Tremper Albino Eclipse" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
+  <input id="aiKey" placeholder="Tempel API Key Gemini kamu di sini (1x aja, kesimpen di HP)" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
+  <button onclick="hitungAI()" style="width:100%;padding:12px;border-radius:10px;background:#E8A020;border:none;font-weight:bold">Hitung Pakai AI</button>
+  <div id="aiHasil" style="margin-top:12px;white-space:pre-wrap;font-size:14px"></div>
+  <small style="color:#888">Hasil AI perkiraan, cek lagi ke breeder ya.</small>
+</div>
   <div id="out"></div>
   <p class="foot">Perkiraan berdasarkan hukum pewarisan dasar. Hasil nyata bisa berbeda, dan gen yang tidak tercatat tidak ikut dihitung. (versi 5)</p>
 </div>
@@ -1573,6 +1592,50 @@ onAuthStateChanged(auth, async user => {
   window.onAuth(user, 0);
   if (user) await setup(user);
 });
+
+// ===== AI MORPH PRO - GRATIS GEMINI =====
+const GEMINI_KEY = localStorage.getItem("morphku_gemini") || "";
+
+function bukaAI(){
+  // INI KUNCINYA: CEK PRO DULU
+  // Ganti 'isPro' sesuai nama variabel PRO di app abang
+  const pro = window.isPro || localStorage.getItem("morphku_pro") === "1";
+  if(!pro){
+    alert("Fitur ini khusus PRO 🔒\nUpgrade dulu buat buka Kalkulator AI Morph Langka.");
+    // kalau abang punya fungsi buka halaman upgrade, panggil di sini
+    // contoh: bukaUpgrade();
+    return;
+  }
+  const box = document.getElementById("aiBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+async function hitungAI(){
+  const spesies = document.getElementById("aiSpesies").value;
+  const j = document.getElementById("aiJantan").value;
+  const b = document.getElementById("aiBetina").value;
+  const out = document.getElementById("aiHasil");
+  if(!j || !b){ alert("Isi dulu jantan & betina nya"); return; }
+   const keyInput = document.getElementById("aiKey").value;
+  if(keyInput){ localStorage.setItem("morphku_gemini", keyInput); }
+  const KEY_PAKE = localStorage.getItem("morphku_gemini");
+  if(!KEY_PAKE){ alert("Tempel API Key Gemini dulu di kolom paling bawah"); return; }
+  out.innerText = "AI lagi ngitung... ⏳";
+
+  const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
+
+  try{
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY_PAKE}`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({contents:[{parts:[{text: prompt}]}]})
+    });
+    const data = await res.json();
+    out.innerText = data.candidates[0].content.parts[0].text;
+  }catch(e){
+    out.innerText = "Gagal, coba lagi. " + e.message;
+  }
+}
 
 const g = new GoogleAuthProvider();
 window.AUTH = {
