@@ -1475,7 +1475,7 @@ setTimeout(() => { if (!window.__authReady){ $("#splash").hidden = true; showLog
 if ("serviceWorker" in navigator){
   const lama = !!navigator.serviceWorker.controller; let ulang = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => { if (lama && !ulang){ ulang = true; location.reload(); } });
-  addEventListener("load", () => navigator.serviceWorker.register("/sw.js", {updateViaCache: "none"}).then(r => {
+  addEventListener("load", () => navigator.serviceWorker.register("./sw.js", {updateViaCache: "none"}).then(r => {
     document.addEventListener("visibilitychange", () => { if (!document.hidden) r.update().catch(() => {}); });
   }).catch(() => {}));
 }
