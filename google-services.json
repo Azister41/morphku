@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "703352296839-ebbeb5p4a2470evaqidisqj4hrhdrocm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.azister41.morphku",
+            "certificate_hash": "72a08d304afffe8bd2340083dd4493625ccb3816"
+          }
+        },
+        {
           "client_id": "703352296839-km8niddd3m477c4h8ac4iv0u3u3084t2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
