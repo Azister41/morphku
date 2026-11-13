@@ -3,7 +3,7 @@
 Morphku adalah aplikasi untuk mencatat, mengelola, dan memantau breeding reptil.
 Dibuat untuk breeder agar tidak lagi mencatat di kertas / excel yang gampang hilang.
 
-**Download APK Terbaru:** [Klik di sini - Releases](https://github.com/username- abang/morphku/releases)
+**Download APK Terbaru:**
 
 ---
 
