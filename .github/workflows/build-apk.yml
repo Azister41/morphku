@@ -73,8 +73,9 @@ jobs:
 
       - name: Pakai KTP Permanen
         run: |
-         cp morphku.keystore android/app/morphku.keystore
-         keytool -list -v -keystore android/app/morphku.keystore -alias morphku -storepass 123456 | grep SHA1
+         mkdir -p android/app
+         cp debug.keystore android/app/morphku.keystore
+          keytool -list -v -keystore android/app/morphku.keystore -alias androiddebugkey -storepass android | grep SHA1
       - name: Build APK Release
         run: |
           cd android
