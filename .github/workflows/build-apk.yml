@@ -71,14 +71,10 @@ jobs:
             exit 1
           fi
 
-      - name: Buat Keystore Baru di GitHub
+      - name: Pakai KTP Permanen
         run: |
-          keytool -genkey -v -keystore android/app/morphku.keystore -alias morphku -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Az Ister, OU=Morphku, O=Morphku, L=Semarang, ST=Jateng, C=ID" -storepass 123456 -keypass 123456
-          echo "======================================"
-          echo "COPY KODE SHA-1 DI BAWAH INI:"
-          keytool -list -v -keystore android/app/morphku.keystore -alias morphku -storepass 123456 | grep "SHA1:"
-          echo "======================================"
-
+         cp morphku.keystore android/app/morphku.keystore
+         keytool -list -v -keystore android/app/morphku.keystore -alias morphku -storepass 123456 | grep SHA1
       - name: Build APK Release
         run: |
           cd android
