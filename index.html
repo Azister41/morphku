@@ -1577,18 +1577,29 @@ onAuthStateChanged(auth, async user => {
 const g = new GoogleAuthProvider();
 window.AUTH = {
   async google(){
-    const u = auth.currentUser;
-    // Di APK (Capacitor): pakai login Google native, bukan popup
-    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
-      const P = window.Capacitor.registerPlugin("FirebaseAuthentication");
-      const res = await P.signInWithGoogle();
-      const cred = GoogleAuthProvider.credential(res.credential.idToken);
-      if (u && u.isAnonymous){ try{ const r = await linkWithCredential(u, cred); await afterLink(); return r; }catch(e){ if (e.code !== "auth/credential-already-in-use") throw e; } }
-      return signInWithCredential(auth, cred);
+  const g = new GoogleAuthProvider();
+  const u = auth.currentUser;
+
+  // KALAU DI APK - pake plugin native
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    const GoogleAuth = window.Capacitor.Plugins.GoogleAuth;
+    // ini yang bikin error tadi kalau pluginnya belum ke-sync
+    const res = await GoogleAuth.signIn();
+    const cred = GoogleAuthProvider.credential(res.authentication.idToken);
+    if (u && u.isAnonymous) {
+      try { const r = await linkWithCredential(u, cred); await afterLink(); return r; }
+      catch(e){ if (e.code !== "auth/credential-already-in-use") throw e; }
     }
-    if (u && u.isAnonymous){ try{ const r = await linkWithPopup(u, g); await afterLink(); return r; }catch(e){ if (e.code !== "auth/credential-already-in-use") throw e; } }
-    return signInWithPopup(auth, g);
-  },
+    return signInWithCredential(auth, cred);
+  }
+
+  // KALAU DI WEB - baru pake popup, ini yang lama abang
+  if (u && u.isAnonymous) {
+    try { const r = await linkWithPopup(u, g); await afterLink(); return r; }
+    catch(e){ if (e.code !== "auth/credential-already-in-use") throw e; }
+  }
+  return signInWithPopup(auth, g);
+},
   emailLogin: (e, p) => signInWithEmailAndPassword(auth, e, p),
   async emailSignup(e, p, n){
     const u = auth.currentUser;
