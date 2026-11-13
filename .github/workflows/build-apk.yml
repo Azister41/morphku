@@ -20,16 +20,35 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Siapkan Capacitor
+      - name: Siapkan Capacitor dan Google Auth
         run: |
           npm init -y
           npm i @capacitor/core @capacitor/cli @capacitor/android
+          npm install @codetrix-studio/capacitor-google-auth
           mkdir -p /tmp/www
           rsync -a --exclude node_modules --exclude android --exclude .git --exclude .github . /tmp/www/
           mv /tmp/www www
           npx cap init Morphku com.azister41.morphku --web-dir=www
+          
+          cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.azister41.morphku",
+            "appName": "Morphku",
+            "webDir": "www",
+            "plugins": {
+              "GoogleAuth": {
+                "scopes": ["profile", "email"],
+                "serverClientId": "703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
+                "forceCodeForRefreshToken": true
+              }
+            }
+          }
+          EOF
+          
           npx cap add android
           npx cap sync android
+          
+          sed -i '/<\/resources>/i \    <string name="server_client_id">703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com<\/string>' android/app/src/main/res/values/strings.xml
 
       - name: Perbaiki duplikat Kotlin
         run: |
