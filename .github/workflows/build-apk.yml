@@ -36,6 +36,11 @@ jobs:
               exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
           }
           GRADLE
+      - name: Ganti ikon aplikasi
+        run: |
+          if [ -f assets/icon.png ]; then
+            npx @capacitor/assets generate --android --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          fi
       - name: Build APK
         run: |
           cd android
