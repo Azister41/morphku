@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "703352296839",
+    "project_id": "reptilku-breedin",
+    "storage_bucket": "reptilku-breedin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703352296839:android:c6db200f1b9af0c4ab6f22",
+        "android_client_info": {
+          "package_name": "com.azister41.morphku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703352296839-bbljtql7kqb7fckfkdk1ngthvst3b545.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.azister41.morphku",
+            "certificate_hash": "d8caf16edfffddd4cdfe5d28f78e9653f9e82cdf"
+          }
+        },
+        {
+          "client_id": "703352296839-gijn0ls197gk4l8qtki4sn34nv9kvion.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.azister41.morphku",
+            "certificate_hash": "a8b5494f708efe591144fc4b42486a08d63f8212"
+          }
+        },
+        {
+          "client_id": "703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzB9I_tksVDUV4raEOSXgXdWonlQMr_2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
