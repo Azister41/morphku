@@ -1583,6 +1583,11 @@ window.AUTH = {
   // KALAU DI APK - pake plugin native
   if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
     const GoogleAuth = window.Capacitor.Plugins.GoogleAuth;
+    await GoogleAuth.initialize({
+  clientId: "703352296839-rvmkvrol2ieu0f5sukf8r0tss3kk9142.apps.googleusercontent.com",
+  scopes: ["profile", "email"],
+  grantOfflineAccess: true
+});
     // ini yang bikin error tadi kalau pluginnya belum ke-sync
     const res = await GoogleAuth.signIn();
     const cred = GoogleAuthProvider.credential(res.authentication.idToken);
