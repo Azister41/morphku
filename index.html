@@ -424,7 +424,6 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
   </select><br><br>
   <input id="aiJantan" placeholder="Contoh: Black Night Mack Snow" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
   <input id="aiBetina" placeholder="Contoh: Tremper Albino Eclipse" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
-  <input id="aiKey" placeholder="Tempel API Key Gemini kamu di sini (1x aja, kesimpen di HP)" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
   <button onclick="hitungAI()" style="width:100%;padding:12px;border-radius:10px;background:#E8A020;border:none;font-weight:bold">Hitung Pakai AI</button>
   <div id="aiHasil" style="margin-top:12px;white-space:pre-wrap;font-size:14px"></div>
   <small style="color:#888">Hasil AI perkiraan, cek lagi ke breeder ya.</small>
@@ -1500,13 +1499,14 @@ if ("serviceWorker" in navigator){
 }
 </script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, linkWithPopup, signInAnonymously, signInWithCredential,
   signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, EmailAuthProvider, linkWithCredential, updateProfile, signOut, deleteUser
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getFirestore, doc, onSnapshot, getDoc, getDocs, setDoc, updateDoc, runTransaction, deleteDoc, collection, query, where, limit, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-ai.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDLKFKymW25JoFFhCMOpkWn0QjlAnYGEAk",
@@ -1594,16 +1594,18 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ===== AI MORPH PRO - GRATIS GEMINI =====
-const GEMINI_KEY = localStorage.getItem("morphku_gemini") || "";
+let aiModel = null;
+function modelAI(){
+  if(!aiModel){
+    const ai = getAI(app, { backend: new GoogleAIBackend() });
+    aiModel = getGenerativeModel(ai, { model: "gemini-2.5-flash" });
+  }
+  return aiModel;
+}
 
 function bukaAI(){
-  // INI KUNCINYA: CEK PRO DULU
-  // Ganti 'isPro' sesuai nama variabel PRO di app abang
-  const pro = window.isPro || localStorage.getItem("morphku_pro") === "1";
-  if(!pro){
+  if(!((typeof isPro === "function") && isPro())){
     alert("Fitur ini khusus PRO 🔒\nUpgrade dulu buat buka Kalkulator AI Morph Langka.");
-    // kalau abang punya fungsi buka halaman upgrade, panggil di sini
-    // contoh: bukaUpgrade();
     return;
   }
   const box = document.getElementById("aiBox");
@@ -1612,30 +1614,22 @@ function bukaAI(){
 
 async function hitungAI(){
   const spesies = document.getElementById("aiSpesies").value;
-  const j = document.getElementById("aiJantan").value;
-  const b = document.getElementById("aiBetina").value;
+  const j = document.getElementById("aiJantan").value.trim();
+  const b = document.getElementById("aiBetina").value.trim();
   const out = document.getElementById("aiHasil");
   if(!j || !b){ alert("Isi dulu jantan & betina nya"); return; }
-   const keyInput = document.getElementById("aiKey").value;
-  if(keyInput){ localStorage.setItem("morphku_gemini", keyInput); }
-  const KEY_PAKE = localStorage.getItem("morphku_gemini");
-  if(!KEY_PAKE){ alert("Tempel API Key Gemini dulu di kolom paling bawah"); return; }
   out.innerText = "AI lagi ngitung... ⏳";
-
-  const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
-
   try{
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY_PAKE}`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({contents:[{parts:[{text: prompt}]}]})
-    });
-    const data = await res.json();
-    out.innerText = data.candidates[0].content.parts[0].text;
+    const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
+    const r = await modelAI().generateContent(prompt);
+    out.innerText = r.response.text();
   }catch(e){
-    out.innerText = "Gagal, coba lagi. " + e.message;
+    out.innerText = "Gagal: " + (e.message || "coba lagi nanti.");
   }
 }
+
+window.bukaAI = bukaAI;
+window.hitungAI = hitungAI;
 
 const g = new GoogleAuthProvider();
 window.AUTH = {
