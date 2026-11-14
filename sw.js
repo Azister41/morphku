@@ -1,5 +1,5 @@
 // Versi cache. Naikkan angkanya kalau suatu saat ingin memaksa semua perangkat membuang cache lama.
-const CACHE = "morphku-v3";
+const CACHE = "morphku-v2";
 const FILES = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
