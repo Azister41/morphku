@@ -1652,7 +1652,7 @@ async function hitungAI(){
     console.error("AI gagal", e);
     aiModel = null; // buat ulang model di percobaan berikutnya
     out.classList.add("err");
-    out.innerText = pesanErrorAI(e);
+    out.innerText = pesanErrorAI(e) + "\n\n[detail teknis] " + String((e && e.code) || "") + " " + String((e && e.message) || "").slice(0, 400);
   }finally{
     if(btn) btn.disabled = false;
   }
