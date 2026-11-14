@@ -244,6 +244,18 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
 .mrow p{margin:6px 0 0;font-size:.9rem;color:var(--mute);line-height:1.45}
 .hd p{margin:0 0 8px;font-size:.92rem;line-height:1.5}.hd p:last-child{margin-bottom:0}
 .hd ul,.hd ol{margin:0 0 8px;padding-left:20px;font-size:.92rem;line-height:1.55}
+
+/* ===== AI MORPH (ikut tema terang/gelap) ===== */
+.ai-open{width:100%;margin-top:10px;padding:14px;border-radius:14px;border:2px dashed var(--acc);background:var(--accbg);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.ai-box{display:none;margin-top:12px;padding:14px;background:var(--accbg);color:var(--ink);border:1px solid var(--line);border-radius:14px}
+.ai-box small{color:var(--mute)}
+.ai-box select,.ai-box input{width:100%;max-width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;margin-bottom:8px}
+.ai-box input::placeholder{color:var(--mute);opacity:.8}
+.ai-go{width:100%;padding:12px;border-radius:10px;background:var(--acc);color:#1b1305;border:none;font:inherit;font-weight:700;cursor:pointer}
+.ai-go:disabled{opacity:.6;cursor:wait}
+.ai-hasil{margin-top:12px;white-space:pre-wrap;font-size:14px;color:var(--ink);overflow-wrap:anywhere}
+.ai-hasil.err{color:#c0392b}
+:root[data-theme="dark"] .ai-hasil.err{color:#f4a09a}
 </style>
 </head>
 <body data-c="0" data-auth="0">
@@ -411,22 +423,22 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
   <div id="parents"></div>
   <button class="cta" id="go">Hitung peluang anakan</button>
   <!-- TOMBOL AI PRO -->
-<button onclick="bukaAI()" style="width:100%;margin-top:10px;padding:14px;border-radius:14px;border:2px dashed #E8A020;background:#FFF8E6;font-weight:bold;cursor:pointer">
+<button class="ai-open" onclick="bukaAI()">
   ✨ Hitung Morph Lain (AI) - PRO 🔒
 </button>
 
-<div id="aiBox" style="display:none;margin-top:12px;padding:14px;background:#FFF8E6;border-radius:14px">
+<div id="aiBox" class="ai-box">
   <b>AI Kalkulator Morph</b><br>
   <small>Ketik morph bebas, diluar 12 yang ada di atas.</small><br><br>
-  <select id="aiSpesies" style="width:100%;padding:10px;border-radius:10px">
+  <select id="aiSpesies">
     <option value="Leopard Gecko">Leopard Gecko</option>
     <option value="Ball Python">Ball Python</option>
-  </select><br><br>
-  <input id="aiJantan" placeholder="Contoh: Black Night Mack Snow" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
-  <input id="aiBetina" placeholder="Contoh: Tremper Albino Eclipse" style="width:100%;padding:10px;border-radius:10px;margin-bottom:8px">
-  <button onclick="hitungAI()" style="width:100%;padding:12px;border-radius:10px;background:#E8A020;border:none;font-weight:bold">Hitung Pakai AI</button>
-  <div id="aiHasil" style="margin-top:12px;white-space:pre-wrap;font-size:14px"></div>
-  <small style="color:#888">Hasil AI perkiraan, cek lagi ke breeder ya.</small>
+  </select>
+  <input id="aiJantan" placeholder="Jantan, contoh: Black Night Mack Snow">
+  <input id="aiBetina" placeholder="Betina, contoh: Tremper Albino Eclipse">
+  <button id="aiGo" class="ai-go" onclick="hitungAI()">Hitung Pakai AI</button>
+  <div id="aiHasil" class="ai-hasil"></div>
+  <small>Hasil AI perkiraan, cek lagi ke breeder ya.</small>
 </div>
   <div id="out"></div>
   <p class="foot">Perkiraan berdasarkan hukum pewarisan dasar. Hasil nyata bisa berbeda, dan gen yang tidak tercatat tidak ikut dihitung. (versi 5)</p>
@@ -1609,7 +1621,17 @@ function bukaAI(){
     return;
   }
   const box = document.getElementById("aiBox");
-  box.style.display = box.style.display === "none" ? "block" : "none";
+  box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+
+function pesanErrorAI(e){
+  const kode = String((e && e.code) || "");
+  const msg = String((e && e.message) || "");
+  if(/api-not-enabled|firebasevertexai|SERVICE_DISABLED/i.test(kode+msg)) return "Fitur AI belum diaktifkan di server. Admin: buka Firebase Console > Build > AI Logic > Get started, pilih Gemini Developer API, lalu coba lagi beberapa menit kemudian.";
+  if(/quota|429|resource.?exhausted|too many/i.test(kode+msg)) return "Kuota AI lagi penuh. Coba lagi sebentar ya.";
+  if(/app-check|appcheck|403|permission/i.test(kode+msg)) return "AI menolak permintaan (verifikasi App Check / izin API key). Coba muat ulang halaman.";
+  if(/network|fetch|offline/i.test(kode+msg)) return "Koneksi bermasalah, cek internet lalu coba lagi.";
+  return "AI lagi gagal: " + (msg || "coba lagi nanti.");
 }
 
 async function hitungAI(){
@@ -1617,14 +1639,22 @@ async function hitungAI(){
   const j = document.getElementById("aiJantan").value.trim();
   const b = document.getElementById("aiBetina").value.trim();
   const out = document.getElementById("aiHasil");
+  const btn = document.getElementById("aiGo");
   if(!j || !b){ alert("Isi dulu jantan & betina nya"); return; }
+  out.classList.remove("err");
   out.innerText = "AI lagi ngitung... ⏳";
+  if(btn) btn.disabled = true;
   try{
     const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
     const r = await modelAI().generateContent(prompt);
     out.innerText = r.response.text();
   }catch(e){
-    out.innerText = "Gagal: " + (e.message || "coba lagi nanti.");
+    console.error("AI gagal", e);
+    aiModel = null; // buat ulang model di percobaan berikutnya
+    out.classList.add("err");
+    out.innerText = pesanErrorAI(e);
+  }finally{
+    if(btn) btn.disabled = false;
   }
 }
 
