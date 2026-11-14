@@ -253,7 +253,18 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
 .ai-box input::placeholder{color:var(--mute);opacity:.8}
 .ai-go{width:100%;padding:12px;border-radius:10px;background:var(--acc);color:#1b1305;border:none;font:inherit;font-weight:700;cursor:pointer}
 .ai-go:disabled{opacity:.6;cursor:wait}
-.ai-hasil{margin-top:12px;white-space:pre-wrap;font-size:14px;color:var(--ink);overflow-wrap:anywhere}
+.ai-hasil{margin-top:12px;font-size:14px;line-height:1.55;color:var(--ink);overflow-wrap:anywhere}
+.ai-hasil.err{white-space:pre-wrap}
+.ai-hasil h4{margin:14px 0 6px;font-size:15px}
+.ai-hasil p{margin:6px 0}
+.ai-hasil ul,.ai-hasil ol{margin:6px 0;padding-left:20px}
+.ai-hasil li{margin:3px 0}
+.ai-hasil hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+.ai-hasil code{background:var(--card);padding:1px 5px;border-radius:5px;font-size:13px}
+.ai-tbl{overflow-x:auto;margin:8px 0}
+.ai-tbl table{border-collapse:collapse;min-width:100%;font-size:13px}
+.ai-tbl th,.ai-tbl td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.ai-tbl th{background:var(--card)}
 .ai-hasil.err{color:#c0392b}
 :root[data-theme="dark"] .ai-hasil.err{color:#f4a09a}
 </style>
@@ -1610,7 +1621,7 @@ let aiModel = null;
 function modelAI(){
   if(!aiModel){
     const ai = getAI(app, { backend: new GoogleAIBackend() });
-    aiModel = getGenerativeModel(ai, { model: "gemini-3.5-flash-lite" }, { timeout: 120000 });
+    aiModel = getGenerativeModel(ai, { model: "gemini-3.5-flash-lite", generationConfig: { temperature: 0.2 } }, { timeout: 120000 });
   }
   return aiModel;
 }
@@ -1638,6 +1649,75 @@ function pesanErrorAI(e){
   return "AI lagi gagal: " + (msg || "coba lagi nanti.");
 }
 
+function aiInline(t){
+  return t.replace(/`([^`]+)`/g,"<code>$1</code>")
+          .replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>")
+          .replace(/(^|[\s(])\*([^*\s][^*]*?)\*(?=[\s).,:;!?]|$)/g,"$1<i>$2</i>")
+          .replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+}
+function renderAI(md){
+  const esc = String(md).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const lines = esc.split("\n");
+  let html = "", i = 0;
+  while(i < lines.length){
+    const ln = lines[i].trim();
+    if(!ln){ i++; continue; }
+    if(/^-{3,}$/.test(ln)){ html += "<hr>"; i++; continue; }
+    const h = ln.match(/^#{1,6}\s+(.*)$/);
+    if(h){ html += "<h4>"+aiInline(h[1])+"</h4>"; i++; continue; }
+    if(ln.startsWith("|")){
+      const rows = [];
+      while(i < lines.length && lines[i].trim().startsWith("|")){ rows.push(lines[i].trim()); i++; }
+      const cells = r => r.replace(/^\||\|$/g,"").split("|").map(c => c.trim());
+      const isSep = r => /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?$/.test(r);
+      let t = "<div class='ai-tbl'><table>", head = true;
+      rows.forEach((r, idx) => {
+        if(isSep(r)) return;
+        const tag = (head && idx === 0) ? "th" : "td";
+        t += "<tr>" + cells(r).map(c => "<"+tag+">"+aiInline(c)+"</"+tag+">").join("") + "</tr>";
+      });
+      html += t + "</table></div>"; continue;
+    }
+    if(/^([-*]\s+|\d+[.)]\s+)/.test(ln)){
+      const ordered = /^\d/.test(ln);
+      let l = ordered ? "<ol>" : "<ul>";
+      while(i < lines.length && /^([-*]\s+|\d+[.)]\s+)/.test(lines[i].trim())){
+        l += "<li>" + aiInline(lines[i].trim().replace(/^([-*]\s+|\d+[.)]\s+)/,"")) + "</li>"; i++;
+      }
+      html += l + (ordered ? "</ol>" : "</ul>"); continue;
+    }
+    html += "<p>" + aiInline(ln) + "</p>"; i++;
+  }
+  return html;
+}
+
+function buatPromptAI(spesies, j, b){
+  return `Kamu ahli genetik reptil (${spesies}) yang teliti. Hitung peluang anakan.
+
+Jantan: ${j}
+Betina: ${b}
+
+ATURAN WAJIB:
+- Pecah nama morph per induk jadi gen satu per satu. Tentukan tiap gen: resesif, codominant (incomplete dominant), dominan, atau line-bred/polygenic.
+- Kalau status het/visual tidak disebut, anggap "visual" untuk gen yang disebut dan "normal" untuk gen yang tidak disebut. Tulis asumsimu di awal.
+- Hitung tiap gen terpisah dengan Punnett square, lalu kalikan peluang antar gen (anggap gen independen).
+- Resesif: baru visual jika kedua kopi resesif. Gen resesif yang berbeda (misal Tremper vs Eclipse) tidak saling menutupi.
+- Codominant: "Super" hanya bisa muncul jika KEDUA induk membawa gen itu. Jangan menulis Super kalau salah satu induk tidak membawa gen tersebut.
+- Gen line-bred/polygenic (misal Black Night) tidak bisa dihitung persen pasti. Sebut sebagai catatan, jangan dimasukkan ke persentase.
+- Jangan mengarang morph. Kalau nama morph tidak dikenal, katakan tidak dikenal.
+- Sebelum menjawab, cek ulang: total persen tabel harus 100%, dan isi tabel tidak boleh bertentangan dengan penjelasan.
+
+FORMAT JAWABAN (Bahasa Indonesia sederhana untuk breeder pemula, singkat, tanpa sapaan panjang):
+### Asumsi genotipe
+(satu baris untuk jantan, satu baris untuk betina)
+### Peluang anakan
+(tabel markdown: Peluang (%) | Fenotipe (yang terlihat) | Genotipe)
+### Penjelasan singkat
+(3 sampai 5 poin)
+### Catatan
+(batasan hasil, dan saran uji keturunan/proven breeder jika perlu)`;
+}
+
 async function hitungAI(){
   const spesies = document.getElementById("aiSpesies").value;
   const j = document.getElementById("aiJantan").value.trim();
@@ -1649,7 +1729,7 @@ async function hitungAI(){
   out.innerText = "AI lagi ngitung... ⏳";
   if(btn) btn.disabled = true;
   try{
-    const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
+    const prompt = buatPromptAI(spesies, j, b);
     let r;
     try{ r = await modelAI().generateContent(prompt); }
     catch(e1){
@@ -1658,7 +1738,7 @@ async function hitungAI(){
       aiModel = null;
       r = await modelAI().generateContent(prompt);
     }
-    out.innerText = r.response.text();
+    out.innerHTML = renderAI(r.response.text());
   }catch(e){
     console.error("AI gagal", e);
     aiModel = null; // buat ulang model di percobaan berikutnya
