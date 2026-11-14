@@ -1627,10 +1627,12 @@ function bukaAI(){
 function pesanErrorAI(e){
   const kode = String((e && e.code) || "");
   const msg = String((e && e.message) || "");
-  if(/api-not-enabled|firebasevertexai|SERVICE_DISABLED/i.test(kode+msg)) return "Fitur AI belum diaktifkan di server. Admin: buka Firebase Console > Build > AI Logic > Get started, pilih Gemini Developer API, lalu coba lagi beberapa menit kemudian.";
-  if(/quota|429|resource.?exhausted|too many/i.test(kode+msg)) return "Kuota AI lagi penuh. Coba lagi sebentar ya.";
-  if(/app-check|appcheck|403|permission/i.test(kode+msg)) return "AI menolak permintaan (verifikasi App Check / izin API key). Coba muat ulang halaman.";
-  if(/network|fetch|offline/i.test(kode+msg)) return "Koneksi bermasalah, cek internet lalu coba lagi.";
+  const t = kode + " " + msg;
+  if(/app.?check|\b401\b/i.test(t)) return "Verifikasi keamanan (App Check) gagal, jadi AI menolak permintaan. Admin: cek pengaturan App Check untuk Firebase AI Logic dan domain reCAPTCHA (localhost untuk APK).";
+  if(/SERVICE_DISABLED|has not been used|api-not-enabled/i.test(t)) return "Fitur AI belum diaktifkan di server. Admin: buka Firebase Console > Build > AI Logic > Get started, pilih Gemini Developer API, lalu coba lagi beberapa menit kemudian.";
+  if(/quota|\b429\b|resource.?exhausted|too many/i.test(t)) return "Kuota AI lagi penuh. Coba lagi sebentar ya.";
+  if(/\b403\b|permission|api.?key/i.test(t)) return "AI menolak permintaan (izin API key). Admin: cek pembatasan API key di Google Cloud.";
+  if(/network|failed to fetch|offline/i.test(t)) return "Koneksi bermasalah, cek internet lalu coba lagi.";
   return "AI lagi gagal: " + (msg || "coba lagi nanti.");
 }
 
