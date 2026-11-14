@@ -1610,7 +1610,7 @@ let aiModel = null;
 function modelAI(){
   if(!aiModel){
     const ai = getAI(app, { backend: new GoogleAIBackend() });
-    aiModel = getGenerativeModel(ai, { model: "gemini-3.8-flash" });
+    aiModel = getGenerativeModel(ai, { model: "gemini-3.8-flash" }, { timeout: 120000 });
   }
   return aiModel;
 }
@@ -1629,6 +1629,7 @@ function pesanErrorAI(e){
   const msg = String((e && e.message) || "");
   const t = kode + " " + msg;
   if(/app.?check|\b401\b/i.test(t)) return "Verifikasi keamanan (App Check) gagal, jadi AI menolak permintaan. Admin: cek pengaturan App Check untuk Firebase AI Logic dan domain reCAPTCHA (localhost untuk APK).";
+  if(/abort/i.test(t)) return "Permintaan ke AI terputus sebelum selesai (koneksi lambat atau AI terlalu lama menjawab). Coba lagi.";
   if(/\b404\b|no longer available|not found/i.test(t)) return "Model AI tidak tersedia lagi. Admin: ganti nama model di kode ke versi terbaru.";
   if(/SERVICE_DISABLED|has not been used|api-not-enabled/i.test(t)) return "Fitur AI belum diaktifkan di server. Admin: buka Firebase Console > Build > AI Logic > Get started, pilih Gemini Developer API, lalu coba lagi beberapa menit kemudian.";
   if(/quota|\b429\b|resource.?exhausted|too many/i.test(t)) return "Kuota AI lagi penuh. Coba lagi sebentar ya.";
@@ -1649,7 +1650,14 @@ async function hitungAI(){
   if(btn) btn.disabled = true;
   try{
     const prompt = `Kamu ahli genetik reptil ${spesies}. Hitung peluang anakan dari Jantan: ${j} X Betina: ${b}. Gunakan hukum Mendel, bedakan resesif, codominant, dominan. Tampilkan dalam tabel persen % + genotipe + fenotipe. Jelaskan singkat pakai Bahasa Indonesia yang gampang dipahami breeder pemula. Jangan ngarang morph yang tidak ada.`;
-    const r = await modelAI().generateContent(prompt);
+    let r;
+    try{ r = await modelAI().generateContent(prompt); }
+    catch(e1){
+      if(!/abort/i.test(String((e1 && e1.message) || ""))) throw e1;
+      out.innerText = "Mencoba lagi... ⏳";
+      aiModel = null;
+      r = await modelAI().generateContent(prompt);
+    }
     out.innerText = r.response.text();
   }catch(e){
     console.error("AI gagal", e);
