@@ -225,6 +225,7 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
 .mbox p{margin:0 0 6px;color:var(--mute);font-size:.92rem}
 .amt{font:700 1.8rem Georgia,serif;color:var(--acc);margin:4px 0 8px}
 .mbox img{display:block;width:100%;max-width:300px;margin:10px auto;border-radius:12px;background:#fff}
+  .support-qris{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center;max-width:360px;margin:16px auto}.support-qris img{display:block;width:100%;max-width:300px;margin:10px auto;border-radius:12px;background:#fff}.support-qris b{display:block;font-size:1.05rem}.support-steps{max-width:360px;margin:0 auto;text-align:left;font-size:.92rem;color:var(--mute)}
 .mbox ol{padding-left:20px;margin:10px 0;color:var(--mute);font-size:.92rem}
 .mbox .r2{display:flex;gap:8px;margin-top:10px}.mbox .r2>*{flex:1;text-align:center}
 .adm h3{margin:18px 0 6px;font:700 1.05rem Georgia,serif}
@@ -342,7 +343,7 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
     <button class="item" data-tip="Koleksi hewan"><svg class="i"><use href="#grid"/></svg><span class="lbl">Koleksi hewan</span></button>
     <button class="item" data-tip="Breeding"><svg class="i"><use href="#egg"/></svg><span class="lbl">Breeding</span></button>
     <button class="item" data-tip="Silsilah"><svg class="i"><use href="#tree"/></svg><span class="lbl">Silsilah</span></button>
-    <button class="item" data-tip="Langganan"><svg class="i"><use href="#leaf"/></svg><span class="lbl">Langganan PRO</span></button>
+    <button class="item" data-tip="Support Me"><svg class="i"><use href="#leaf"/></svg><span class="lbl">☕ Support Me</span></button>
     <button class="item" id="admBtn" data-tip="Admin" hidden><svg class="i"><use href="#shield"/></svg><span class="lbl">Admin</span></button>
     <button class="item" data-tip="Notifikasi"><svg class="i"><use href="#bell"/></svg><span class="lbl">Notifikasi</span><span class="badge" id="nbd" hidden>0</span></button>
     <hr>
@@ -368,7 +369,7 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
 </aside>
 
 <main>
-  <div class="top"><div class="hi" id="ttl">Beranda</div><button class="pro" id="plan" data-go="pro">PRO</button></div><div class="view" id="v-home">
+  <div class="top"><div class="hi" id="ttl">Beranda</div><button class="pro" id="plan" data-go="pro">☕ Support Me</button></div><div class="view" id="v-home">
   <section class="hero">
     <h1>Tebak anakan sebelum dikawinkan</h1>
     <p>Contoh: induk jantan Albino dengan betina Normal het Albino.</p>
@@ -433,9 +434,9 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
   <div class="acts" id="spsw" style="margin:0 0 10px"><button class="btn" data-spsw="leopard" data-sp="leopard" type="button" aria-pressed="true">Leopard Gecko</button><button class="btn" data-spsw="ball" data-sp="ball" type="button" aria-pressed="false">Ball Python</button></div>
   <div id="parents"></div>
   <button class="cta" id="go">Hitung peluang anakan</button>
-  <!-- TOMBOL AI PRO -->
+  <!-- TOMBOL AI GRATIS -->
 <button class="ai-open" onclick="bukaAI()">
-  ✨ Hitung Morph Lain (AI) - PRO 🔒
+  ✨ Hitung Morph Lain (AI) — Gratis
 </button>
 
 <div id="aiBox" class="ai-box">
@@ -532,8 +533,8 @@ setTheme(root.dataset.theme, false);
 // ===== navigasi layar =====
 let tm;
 function toast(t){ const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(tm); tm = setTimeout(() => e.classList.remove("on"), 1700); }
-const VIEWS = {"Beranda":"home", "Hitung":"calc", "Riwayat":"riwayat", "Koleksi hewan":"koleksi", "Breeding":"breeding", "Silsilah":"silsilah", "Notifikasi":"notif", "Pengaturan":"set", "Bantuan":"bantuan", "Leopard Gecko":"katalog", "Ball Python":"katalog", "Panduan gen":"panduan", "Langganan":"pro", "Admin":"admin"};
-const TITLES = {home:"Beranda", calc:"Hitung", riwayat:"Riwayat", koleksi:"Koleksi hewan", breeding:"Breeding", silsilah:"Silsilah", notif:"Notifikasi", set:"Pengaturan", bantuan:"Bantuan", katalog:"Leopard Gecko", panduan:"Panduan gen", pro:"Langganan PRO", admin:"Admin"};
+const VIEWS = {"Beranda":"home", "Hitung":"calc", "Riwayat":"riwayat", "Koleksi hewan":"koleksi", "Breeding":"breeding", "Silsilah":"silsilah", "Notifikasi":"notif", "Pengaturan":"set", "Bantuan":"bantuan", "Leopard Gecko":"katalog", "Ball Python":"katalog", "Panduan gen":"panduan", "Support Me":"pro", "Admin":"admin"};
+const TITLES = {home:"Beranda", calc:"Hitung", riwayat:"Riwayat", koleksi:"Koleksi hewan", breeding:"Breeding", silsilah:"Silsilah", notif:"Notifikasi", set:"Pengaturan", bantuan:"Bantuan", katalog:"Leopard Gecko", panduan:"Panduan gen", pro:"Support Me — Secangkir Kopi", admin:"Admin"};
 function show(v){
   if (v === "admin" && !ISADMIN) v = "home";
   document.querySelectorAll(".view").forEach(x => x.hidden = x.id !== "v-" + v);
@@ -671,7 +672,7 @@ $("#go").addEventListener("click", () => {
   const unkM = $('[data-unk="m"]').checked, unkF = $('[data-unk="f"]').checked;
   const used = GENES.filter(g => A[g.id] !== "0" || B[g.id] !== "0");
   if (!used.length){ out.innerHTML = '<div class="note warn">Pilih minimal satu morph pada salah satu induk, lalu hitung lagi.</div>'; return; }
-  if (!canCalc()){ show("pro"); toast("Batas hitungan gratis hari ini sudah habis"); return; }
+  if (!canCalc()){ show("pro"); toast("Semua fitur gratis"); return; }
   let html = "";
   if (unkM || unkF) html += `<div class="note">Morph ${unkM && unkF ? "kedua induk" : unkM ? "induk jantan" : "induk betina"} tidak diketahui, jadi hasil hanya memakai gen yang Anda pilih. Induk yang tampak normal tetap bisa membawa gen resesif tersembunyi. Untuk kepastian, cek silsilah atau tanya peternak asalnya.</div>`;
   used.filter(g => g.warn).forEach(g => html += `<div class="note warn"><b>${g.name}:</b> ${g.warn}</div>`);
@@ -692,8 +693,8 @@ $("#go").addEventListener("click", () => {
   renderQuota();
 });
 
-// ===== PENGATURAN PRO (ubah angka di sini) =====
-const CFG = {FREE_DAILY:3, FREE_HIST:5, PRO_HIST:50,
+// ===== PENGATURAN GRATIS (semua fitur terbuka) =====
+const CFG = {FREE_DAILY:999999, FREE_HIST:50, PRO_HIST:50,
   QRIS_IMG:"https://i.postimg.cc/7ZZcPcWt/1793770521-picsay.png",
   QRIS_NAMA:"",             // nama yang tampil di QRIS, contoh: "Budi Santoso"
   WA:"6289515307900",       // nomor WA admin, format 62 tanpa +
@@ -711,23 +712,22 @@ const simpan = (k, v) => {
 // dipanggil modul Firebase setelah data pengguna selesai dimuat
 window.onData = (uid, o) => { if (uid !== UID) return; Object.keys(CACHE).forEach(k => delete CACHE[k]); Object.assign(CACHE, o); refreshAll(); };
 const proUntil = () => SERVER_UNTIL;
-const isPro = () => proUntil() > Date.now();
+// SEMUA FITUR GRATIS — tidak ada lagi kunci PRO
+const isPro = () => true;
 const hariIni = () => Math.floor(Date.now() / 864e5); // nomor hari (UTC), cocok dengan firestore.rules
 const terpakai = () => { const q = muat("kuota", {}); return q.d === hariIni() ? q.n : 0; };
-const canCalc = () => isPro() || terpakai() < CFG.FREE_DAILY;
-const useQuota = () => { if (!isPro()) simpan("kuota", {d: hariIni(), n: terpakai() + 1}); };
+const canCalc = () => true;
+const useQuota = () => {}; // kuota dimatikan, hitung tanpa batas
 const tgl = t => new Date(t).toLocaleString("id-ID", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
 
 function renderPlan(){
-  const b = $("#plan"), pro = isPro();
-  b.textContent = pro ? "PRO" : "Gratis";
-  b.classList.toggle("free", !pro);
+  const b = $("#plan");
+  b.textContent = "☕ Support Me";
+  b.classList.remove("free");
 }
 function renderQuota(){ renderNbd();
   const q = $("#quota");
-  q.innerHTML = isPro()
-    ? "<span>PRO aktif: hitung tanpa batas</span>"
-    : `<span>Sisa hitungan gratis hari ini: <b>${Math.max(CFG.FREE_DAILY - terpakai(), 0)}</b> dari ${CFG.FREE_DAILY}</span><button data-go="pro">Lihat PRO</button>`;
+  q.innerHTML = `<span>✨ Semua fitur gratis — hitung tanpa batas, semua riwayat terbuka</span><button data-go="pro">☕ Support Me</button>`;
 }
 const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rp = n => "Rp " + Number(n).toLocaleString("id-ID");
@@ -737,54 +737,23 @@ let REQ = null, LIHAT_PLAN = false;
 window.onReq = r => { REQ = r; LIHAT_PLAN = false; if (!$("#v-pro").hidden) renderPro(); renderNbd(); if (!$("#v-notif").hidden) renderNotif(); };
 
 function renderPro(){
-  const box = $("#pro"), pro = isPro();
-  const wa = CFG.WA ? ` <a href="https://wa.me/${esc(CFG.WA)}" target="_blank" rel="noopener">Chat admin</a>` : "";
-  const pend = REQ && REQ.status === "menunggu" && !LIHAT_PLAN;
-  const plans = `<div class="plans">${CFG.PLANS.map(p => `<div class="plan${p.best ? " best" : ""}"><div><b>${p.price}</b><small>${p.name}, ${p.per}</small></div><button class="cta sm" data-plan="${p.id}">${pro ? "Perpanjang" : "Bayar QRIS"}</button></div>`).join("")}</div>`;
-  let info = "";
-  if (pend){
-    const pl = planOf(REQ.plan) || {};
-    info = `<div class="hnote"><b>Menunggu verifikasi admin</b><br>Paket ${esc(pl.name)}, nominal ${rp(REQ.amount)}. PRO diaktifkan setelah pembayaran dicek.${wa}<br><button data-act="ulang">Salah paket? Buat permintaan baru</button></div>`;
-  } else if (REQ && REQ.status === "ditolak"){
-    info = `<div class="hnote">Permintaan terakhir ditolak karena pembayaran tidak ditemukan. Jika Anda sudah membayar, hubungi admin.${wa}</div>`;
-  }
-  const anon = ME && ME.isAnonymous ? '<div class="hnote">Anda masuk sebagai tamu. Untuk berlangganan, <button data-act="login">masuk ke akun</button> dulu.</div>' : "";
-  if (pro){
-    box.innerHTML = `<section class="hero"><h1>PRO aktif</h1><p>Berlaku sampai ${tglPanjang(proUntil())}. Hitungan tanpa batas dan riwayat sampai ${CFG.PRO_HIST}.</p></section>${info}${pend ? "" : plans}`;
-    return;
-  }
-  box.innerHTML = `<section class="hero"><h1>Hitung tanpa batas</h1><p>Gratis: ${CFG.FREE_DAILY} hitungan per hari dan ${CFG.FREE_HIST} riwayat terakhir.</p>
-    <ul class="perks"><li>Hitungan tanpa batas setiap hari</li><li>Riwayat sampai ${CFG.PRO_HIST} hitungan</li></ul></section>
-    ${info}${pend ? "" : plans}${anon}`;
+  // Halaman ini sekarang = Support Me, bukan lagi halaman bayar / langganan PRO.
+  // Semua fitur sudah gratis. Dukungan bersifat sukarela.
+  const box = $("#pro");
+  const wa = CFG.WA ? `<a class="btn" href="https://wa.me/${esc(CFG.WA)}" target="_blank" rel="noopener">Chat admin</a>` : "";
+  box.innerHTML = `<section class="hero"><h1>☕ Support Me — Secangkir Kopi</h1><p>Terima kasih sudah pakai Morphku! Semua fitur di aplikasi ini <b>100% gratis</b> — hitung tanpa batas, semua riwayat terbuka, dan Kalkulator AI terbuka untuk semua.</p>
+    <ul class="perks"><li>✅ Hitungan tanpa batas setiap hari</li><li>✅ Riwayat sampai ${CFG.PRO_HIST} hitungan, semua terlihat</li><li>✅ Kalkulator AI Morph — gratis, tanpa kunci</li></ul></section>
+    <div class="res" style="text-align:center"><b>Kalau Morphku membantu breeding kamu,</b><br><span style="color:var(--mute);font-size:.92rem">traktir aku secangkir kopi yuk — biar semangat update fitur baru. Dukungan ini sukarela, bukan untuk membuka fitur, karena semua sudah terbuka.</span></div>
+    <div class="support-qris"><b>Scan QRIS di bawah ini</b><img src="${esc(CFG.QRIS_IMG)}" alt="QRIS Support Me — Secangkir Kopi"><span style="font-size:.9rem;color:var(--mute)">Nominal bebas, seikhlasnya. Scan pakai e-wallet / m-banking apa saja.</span></div>
+    <div class="support-steps"><ol><li>Buka e-wallet atau m-banking kamu, pilih <b>Scan QRIS</b>.</li><li>Scan kode di atas, isi nominal seikhlasnya.</li><li>Selesai! Terima kasih banyak 🙏</li></ol></div>
+    <div class="res" style="text-align:center"><div class="acts" style="justify-content:center">${wa}<button class="btn" data-go="calc" type="button">Kembali ke Hitung</button></div><div style="font-size:.85rem;color:var(--mute);margin-top:8px">Tidak wajib. Kalau belum bisa support, tetap pakai Morphku sepuasnya — gratis.</div></div>`;
 }
 
-// ----- Bayar lewat QRIS -----
-function openBayar(id){
-  const p = planOf(id); if (!p) return;
-  const kode = 100 + Math.floor(Math.random() * 900), amt = p.amt + kode, m = $("#bayar");
-  m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">
-    <h2>Bayar PRO ${esc(p.name)}</h2>
-    <p>Bayar tepat sesuai nominal ini (jangan dibulatkan) agar pembayaran Anda dikenali:</p>
-    <div class="amt">${rp(amt)}</div>
-    <button class="btn" id="cpAmt" type="button">Salin nominal</button>
-    <img id="qimg" src="${esc(CFG.QRIS_IMG)}" alt="QRIS pembayaran">
-    ${CFG.QRIS_NAMA ? `<p style="text-align:center">a.n. ${esc(CFG.QRIS_NAMA)}</p>` : ""}
-    <ol><li>Buka e-wallet atau m-banking, pilih Scan QRIS.</li><li>Masukkan nominal persis seperti di atas.</li><li>Setelah berhasil bayar, tekan "Saya sudah bayar".</li></ol>
-    <button class="cta" id="bPaid" type="button">Saya sudah bayar</button>
-    <div class="r2"><button class="btn" id="bClose" type="button">Batal</button></div></div>`;
-  m.hidden = false;
-  $("#qimg").onerror = e => { e.target.replaceWith(Object.assign(document.createElement("p"), {textContent:"Gambar QRIS belum dipasang oleh admin."})); };
-  $("#cpAmt").onclick = () => { try{ navigator.clipboard.writeText(String(amt)).then(() => toast("Nominal disalin"), () => toast("Salin manual: " + amt)); }catch(e){ toast("Salin manual: " + amt); } };
-  $("#bClose").onclick = () => { m.hidden = true; };
-  $("#bPaid").onclick = async ev => {
-    const b = ev.currentTarget; b.disabled = true;
-    try{ await window.DB.kirim(p.id, amt); m.hidden = true; toast("Terkirim. Menunggu verifikasi admin"); }
-    catch(e){ console.error(e); toast(e.code === "permission-denied" ? "Tunggu sebentar lalu coba lagi" : "Gagal mengirim. Coba lagi"); b.disabled = false; }
-  };
-}
+// ----- Bayar lewat QRIS (NONAKTIF — semua gratis, diganti Support Me) -----
+function openBayar(id){ show("pro"); toast("Semua fitur sudah gratis — kalau mau support, scan QRIS di halaman ini ya ☕"); }
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-plan]");
-  if (a){ if (ME && ME.isAnonymous){ toast("Masuk ke akun dulu untuk berlangganan"); return showLogin(true); } return openBayar(a.dataset.plan); }
+  if (a){ return show("pro"); }
   if (e.target.closest('[data-act="login"]')) return showLogin(true);
   if (e.target.closest('[data-act="ulang"]')){ LIHAT_PLAN = true; renderPro(); }
 });
@@ -797,10 +766,10 @@ window.onAdmin = (v, bukanGoogle) => {
 };
 function renderAdmin(){
   if (!ISADMIN) return;
-  $("#adm").innerHTML = `<section class="hero"><h1>Admin</h1><p>Verifikasi pembayaran QRIS dan beri PRO manual.</p></section>
+  $("#adm").innerHTML = `<section class="hero"><h1>Admin</h1><p>Sistem pembayaran sudah nonaktif — semua fitur gratis untuk semua pengguna. Menu ini tinggal arsip.</p></section>
     <h3>Menunggu verifikasi</h3><div id="admPend">Memuat...</div>
-    <h3>Beri PRO lewat email</h3><input id="admEm" type="email" placeholder="email pengguna" autocomplete="off"><button class="btn" data-a="find" type="button">Cari</button><div id="admRes"></div>
-    <h3>PRO aktif</h3><button class="btn" data-a="pro" type="button">Muat daftar</button><div id="admList"></div>`;
+    <h3>Lihat Anggota lewat email</h3><input id="admEm" type="email" placeholder="email pengguna" autocomplete="off"><button class="btn" data-a="find" type="button">Cari</button><div id="admRes"></div>
+    <h3>Semua Gratis</h3><button class="btn" data-a="pro" type="button">Muat daftar</button><div id="admList"></div>`;
   loadPend();
 }
 async function loadPend(){
@@ -812,32 +781,32 @@ async function loadPend(){
     el.innerHTML = l.length ? l.map(r => {
       const p = planOf(r.plan), kode = p ? r.amount - p.amt : -1, aneh = !p || kode < 100 || kode > 999;
       return `<div class="admc"><b>${esc(r.email)}</b><small>${p ? esc(p.name) : "paket tidak dikenal"} &middot; ${rp(r.amount)}${r.createdAt ? " &middot; " + tgl(r.createdAt.toMillis()) : ""}</small>
-        ${aneh ? '<div class="wx">Nominal tidak wajar untuk paket ini</div>' : ""}
-        ${dup[r.amount] > 1 ? '<div class="wx">Ada permintaan lain dengan nominal sama. Cocokkan mutasi dengan teliti.</div>' : ""}
-        <div class="ar"><button class="btn" data-a="ok" data-uid="${esc(r.id)}" data-plan="${esc(r.plan)}" data-amt="${esc(r.amount)}" data-em="${esc(r.email)}" type="button"${aneh ? " disabled" : ""}>Setujui</button><button class="btn danger" data-a="no" data-uid="${esc(r.id)}" data-em="${esc(r.email)}" type="button">Tolak</button></div></div>`;
+        ${aneh ? '<div class="wx">Nominal arsip — sistem pembayaran nonaktif</div>' : ""}
+        ${dup[r.amount] > 1 ? '<div class="wx">Sistem pembayaran sudah nonaktif.</div>' : ""}
+        <div class="ar"><button class="btn" data-a="ok" data-uid="${esc(r.id)}" data-plan="${esc(r.plan)}" data-amt="${esc(r.amount)}" data-em="${esc(r.email)}" type="button"${aneh ? " disabled" : ""}>Setujui (arsip)</button><button class="btn danger" data-a="no" data-uid="${esc(r.id)}" data-em="${esc(r.email)}" type="button">Tolak (arsip)</button></div></div>`;
     }).join("") : "<small>Tidak ada permintaan.</small>";
   }catch(e){ console.error(e); el.textContent = "Gagal memuat (" + (e.code || e.message) + ")"; }
 }
-const adminKartu = (id, em, nama, ok, until) => `<div class="admc"><b>${esc(em)}</b><small>${esc(nama || "")}${ok ? "" : " &middot; email belum terverifikasi"}${until > Date.now() ? " &middot; PRO sampai " + tglPanjang(until) : ""}</small>
-  <div class="ar"><button class="btn" data-a="add" data-days="30" data-uid="${esc(id)}" data-em="${esc(em)}" type="button"${ok ? "" : " disabled"}>+30 hari</button><button class="btn" data-a="add" data-days="365" data-uid="${esc(id)}" data-em="${esc(em)}" type="button"${ok ? "" : " disabled"}>+365 hari</button><button class="btn danger" data-a="rev" data-uid="${esc(id)}" data-em="${esc(em)}" type="button">Cabut PRO</button></div></div>`;
+const adminKartu = (id, em, nama, ok, until) => `<div class="admc"><b>${esc(em)}</b><small>${esc(nama || "")}${ok ? "" : " &middot; email belum terverifikasi"}${until > Date.now() ? " &middot; Anggota sejak " + tglPanjang(until) : ""}</small>
+  <div class="ar"><button class="btn" data-a="add" data-days="30" data-uid="${esc(id)}" data-em="${esc(em)}" type="button"${ok ? "" : " disabled"}>Arsip +30 hari</button><button class="btn" data-a="add" data-days="365" data-uid="${esc(id)}" data-em="${esc(em)}" type="button"${ok ? "" : " disabled"}>Arsip +365 hari</button><button class="btn danger" data-a="rev" data-uid="${esc(id)}" data-em="${esc(em)}" type="button">Arsip</button></div></div>`;
 $("#adm").addEventListener("click", async e => {
   const b = e.target.closest("[data-a]"); if (!b || !ISADMIN) return;
   const a = b.dataset.a, uid = b.dataset.uid, em = b.dataset.em, D = window.DB;
   try{
     if (a === "ok"){
       const p = planOf(b.dataset.plan), amt = +b.dataset.amt;
-      if (!p || !confirm("Setujui " + p.name + " untuk " + em + "?\nPastikan mutasi masuk tepat " + rp(amt))) return;
-      b.disabled = true; const u = await D.grant(uid, p.days, {plan:p.id, amount:amt}); toast("PRO aktif sampai " + tglPanjang(u)); loadPend();
+      if (!p || !confirm("Setujui (arsip) " + p.name + " untuk " + em + "?")) return;
+      b.disabled = true; const u = await D.grant(uid, p.days, {plan:p.id, amount:amt}); toast("Tersimpan sampai " + tglPanjang(u)); loadPend();
     } else if (a === "no"){
       if (!confirm("Tolak permintaan " + em + "?")) return;
       b.disabled = true; await D.reject(uid); toast("Ditolak"); loadPend();
     } else if (a === "add"){
       const d = +b.dataset.days;
-      if (!confirm("Beri " + d + " hari PRO ke " + em + "?")) return;
-      const u = await D.grant(uid, d, null); toast("PRO aktif sampai " + tglPanjang(u)); b.closest(".admc").querySelector("small").innerHTML += " &middot; PRO sampai " + tglPanjang(u);
+      if (!confirm("Beri akses (arsip) " + d + " hari ke " + em + "?")) return;
+      const u = await D.grant(uid, d, null); toast("Tersimpan sampai " + tglPanjang(u)); b.closest(".admc").querySelector("small").innerHTML += " &middot; Anggota sejak " + tglPanjang(u);
     } else if (a === "rev"){
-      if (!confirm("Cabut PRO milik " + em + " sekarang?")) return;
-      await D.revoke(uid); toast("PRO dicabut");
+      if (!confirm("Arsip milik " + em + " sekarang?")) return;
+      await D.revoke(uid); toast("Diarsipkan");
     } else if (a === "find"){
       const v = $("#admEm").value.trim().toLowerCase(); if (!v) return toast("Isi email dulu");
       const r = await D.byEmail(v), out = $("#admRes");
@@ -846,7 +815,7 @@ $("#adm").addEventListener("click", async e => {
       out.innerHTML = r.map((x, i) => adminKartu(x.id, x.email, x.nama, x.verified, un[i])).join("");
     } else if (a === "pro"){
       const l = await D.proList();
-      $("#admList").innerHTML = l.length ? l.map(x => `<div class="admc"><b>${esc(x.email || x.id)}</b><small>sampai ${tglPanjang(x.until)}</small></div>`).join("") : "<small>Belum ada PRO aktif.</small>";
+      $("#admList").innerHTML = l.length ? l.map(x => `<div class="admc"><b>${esc(x.email || x.id)}</b><small>sampai ${tglPanjang(x.until)}</small></div>`).join("") : "<small>Belum ada data arsip.</small>";
     }
   }catch(err){
     console.error(err); b.disabled = false;
@@ -855,7 +824,7 @@ $("#adm").addEventListener("click", async e => {
   }
 });
 
-const maxHist = () => isPro() ? CFG.PRO_HIST : CFG.FREE_HIST;
+const maxHist = () => CFG.PRO_HIST; // semua riwayat terbuka
 const getHist = () => muat("riwayat", []);
 function saveHist(h){ h.id = Date.now(); h.t = h.id; simpan("riwayat", [h, ...getHist()].slice(0, CFG.PRO_HIST)); renderBadge(); }
 function renderBadge(){
@@ -875,7 +844,7 @@ function renderHist(){
     : '<div class="empty"><b>Belum ada hitungan</b>Pilih induk jantan dan betina untuk memulai.</div>';
   $("#hcount").textContent = vis.length + " hitungan tersimpan";
   $("#hlist").innerHTML = vis.length
-    ? vis.map(entry).join("") + (hidden > 0 ? `<div class="hnote">${hidden} riwayat lama tersembunyi. <button data-go="pro">Buka dengan PRO</button></div>` : "")
+    ? vis.map(entry).join("")
     : '<div class="empty"><b>Riwayat masih kosong</b>Hasil hitungan akan tersimpan di sini.</div>';
   $("#hclear").hidden = all.length === 0;
   renderBadge();
@@ -1184,31 +1153,20 @@ async function bagikanSilsilah(){
 }
 
 // ===== NOTIFIKASI =====
-// Dibuat dari status akun (pembayaran, PRO, kuota), jadi tidak perlu koleksi Firestore baru.
+// Semua gratis — tidak ada lagi status pembayaran / PRO / kuota, jadi tidak perlu koleksi Firestore baru.
 // Status sudah dibaca disimpan per perangkat.
 let ADMPEND = 0;
 const dibaca = () => { try{ return JSON.parse(localStorage.getItem("notif:" + UID)) || [] }catch(e){ return [] } };
 const tandai = ids => { try{ localStorage.setItem("notif:" + UID, JSON.stringify([...new Set([...dibaca(), ...ids])].slice(-100))) }catch(e){} };
 function notifList(){
-  const l = [];
-  if (ISADMIN && ADMPEND > 0) l.push({id:"adm:" + ADMPEND, go:"admin", t:ADMPEND + " permintaan bayar menunggu", s:"Cek mutasi QRIS, lalu setujui atau tolak."});
-  if (REQ){
-    const pl = planOf(REQ.plan) || {name:""};
-    if (REQ.status === "menunggu") l.push({id:"req:w:" + REQ.amount, go:"pro", t:"Pembayaran menunggu verifikasi", s:"Paket " + pl.name + ", " + rp(REQ.amount) + ". Admin akan mengecek pembayaranmu."});
-    if (REQ.status === "ditolak") l.push({id:"req:n:" + REQ.amount, go:"pro", t:"Permintaan ditolak", s:"Pembayaran " + rp(REQ.amount) + " tidak ditemukan. Hubungi admin kalau sudah bayar."});
-  }
-  if (isPro()){
-    const sisa = Math.ceil((proUntil() - Date.now()) / 864e5);
-    l.push({id:"pro:" + proUntil(), go:"pro", t:"PRO aktif", s:"Berlaku sampai " + tglPanjang(proUntil()) + "."});
-    if (sisa <= 7) l.push({id:"exp:" + proUntil(), go:"pro", t:"PRO berakhir " + sisa + " hari lagi", s:"Perpanjang supaya hitungan tetap tanpa batas."});
-  } else if (terpakai() >= CFG.FREE_DAILY) l.push({id:"kuota:" + hariIni(), go:"pro", t:"Hitungan gratis hari ini habis", s:"Kuota kembali besok, atau pakai PRO untuk tanpa batas."});
-  return l;
+  // Notifikasi pembayaran / PRO / kuota sudah nonaktif — semua gratis.
+  return [];
 }
 function renderNbd(){ const d = dibaca(), n = notifList().filter(x => !d.includes(x.id)).length, b = $("#nbd"); b.textContent = n; b.hidden = n === 0; }
 function renderNotif(){
   const l = notifList(), d = dibaca();
   $("#nlist").innerHTML = l.length ? l.map(n => `<button class="res nitem" data-ng="${esc(n.go)}" data-nid="${esc(n.id)}"><div class="t"><span>${esc(n.t)}</span>${d.includes(n.id) ? "" : '<i class="nd"></i>'}</div><div style="color:var(--mute);font-size:.88rem;font-weight:400">${esc(n.s)}</div></button>`).join("")
-    : '<div class="empty"><b>Belum ada notifikasi</b>Status pembayaran dan PRO akan muncul di sini.</div>';
+    : '<div class="empty"><b>Belum ada notifikasi</b>Semua fitur gratis. Kalau mau support, cek menu ☕ Support Me.</div>';
   $("#nall").hidden = !l.some(n => !d.includes(n.id));
   renderNbd();
 }
@@ -1402,12 +1360,12 @@ function renderBantuan(){
   ${q("Cara memakai Koleksi hewan", `<p>Ketuk <b>Tambah hewan</b>, isi nama, jenis kelamin, dan morph-nya. Di daftar koleksi, tombol <b>Pakai jantan</b> atau <b>Pakai betina</b> langsung mengisi induk di layar Hitung, jadi Anda tidak perlu memilih morph satu per satu.</p>`)}
   ${q("Apakah data saya aman?", `<p>Riwayat dan koleksi tersimpan di akun Anda. Pada <b>akun tamu</b>, data hilang kalau Anda keluar, jadi tautkan akun ke Google lewat menu <b>Pengaturan</b>.</p><p>Di <b>Pengaturan</b> Anda juga bisa mengekspor data ke file atau menghapusnya.</p>`)}
 
-  <div class="sh">Langganan PRO</div>
-  ${q("Perbedaan Gratis dan PRO", `<ul><li><b>Gratis:</b> ${CFG.FREE_DAILY} hitungan per hari, dan ${CFG.FREE_HIST} riwayat terbaru yang terlihat.</li><li><b>PRO:</b> hitung tanpa batas dan sampai ${CFG.PRO_HIST} riwayat tersimpan.</li></ul>`)}
-  ${q("Cara berlangganan PRO", `<ol><li>Buka <b>Langganan PRO</b> dan pilih paket (${esc(paket)}).</li><li>Bayar lewat QRIS sesuai nominal yang tampil, termasuk kode unik di belakangnya.</li><li>Kirim konfirmasi di halaman yang sama. Admin akan memverifikasi, lalu PRO aktif.</li></ol><p>Status pembayaran bisa dilihat di <b>Langganan PRO</b> dan <b>Notifikasi</b>.</p>`)}
+  <div class="sh">Semua Gratis & Support Me</div>
+  ${q("Apakah Morphku masih ada paket PRO?", `<p>Tidak ada lagi. Semua fitur <b>100% gratis</b> — hitung tanpa batas, semua riwayat terlihat, dan Kalkulator AI terbuka untuk semua.</p>`)}
+  ${q("Cara support Secangkir Kopi", `<ol><li>Buka menu <b>☕ Support Me</b>.</li><li>Scan QRIS yang tampil, isi nominal seikhlasnya.</li><li>Selesai! Dukungan bersifat sukarela, bukan untuk membuka fitur.</li></ol><p>Terima kasih sudah support Morphku 🙏</p>`)}
 
   <div class="sh">Masih butuh bantuan?</div>
-  <div class="res"><div style="font-size:.92rem">Kalau ada yang belum jelas, ada hasil yang tampak janggal, atau pembayaran belum terverifikasi, hubungi admin.</div>${wa}</div>`;
+  <div class="res"><div style="font-size:.92rem">Kalau ada yang belum jelas atau ada hasil yang tampak janggal, hubungi admin.</div>${wa}</div>`;
 }
 
 // ===== PENGATURAN =====
@@ -1421,9 +1379,9 @@ function renderSet(){
     ${tamu ? '<div class="acts"><button class="cta sm" data-set="link" type="button">Tautkan ke Google</button></div>' : `<input class="kin" id="snm" maxlength="40" placeholder="Nama tampilan" value="${esc(u.displayName || "")}" aria-label="Nama tampilan"><div class="acts"><button class="btn" data-set="nama" type="button">Simpan nama</button></div>`}
     <div class="acts"><button class="btn" data-set="keluar" type="button">Keluar</button><button class="btn danger" data-set="hapusakun" type="button">Hapus akun</button></div>
   </div>
-  <div class="sh">Langganan</div><div class="res">
-    <div>${pro ? "PRO aktif sampai " + tglPanjang(proUntil()) : "Paket Gratis: " + CFG.FREE_DAILY + " hitungan per hari"}</div>
-    <div class="acts"><button class="btn" data-go="pro" type="button">${pro ? "Perpanjang" : "Lihat paket PRO"}</button>${CFG.WA ? `<a class="btn" href="https://wa.me/${CFG.WA}" target="_blank" rel="noopener">Chat admin</a>` : ""}</div>
+  <div class="sh">Semua Fitur Gratis</div><div class="res">
+    <div>✨ Semua fitur terbuka — hitung tanpa batas, semua riwayat & AI gratis.</div>
+    <div class="acts"><button class="btn" data-go="pro" type="button">☕ Support Me — Secangkir Kopi</button>${CFG.WA ? `<a class="btn" href="https://wa.me/${CFG.WA}" target="_blank" rel="noopener">Chat admin</a>` : ""}</div>
   </div>
   <div class="sh">Data saya</div><div class="res">
     <div style="font-size:.9rem;color:var(--mute)">${getHist().length} riwayat, ${getKol().length} hewan</div>
@@ -1616,7 +1574,7 @@ onAuthStateChanged(auth, async user => {
   if (user) await setup(user);
 });
 
-// ===== AI MORPH PRO - GRATIS GEMINI =====
+// ===== AI MORPH — GRATIS GEMINI =====
 let aiModel = null;
 function modelAI(){
   if(!aiModel){
@@ -1627,10 +1585,7 @@ function modelAI(){
 }
 
 function bukaAI(){
-  if(!((typeof isPro === "function") && isPro())){
-    alert("Fitur ini khusus PRO 🔒\nUpgrade dulu buat buka Kalkulator AI Morph Langka.");
-    return;
-  }
+  // AI sekarang gratis untuk semua, tanpa kunci PRO
   const box = document.getElementById("aiBox");
   box.style.display = (box.style.display === "block") ? "none" : "block";
 }
@@ -1867,7 +1822,7 @@ async function muatAnggota(){
       const email = u.email || '', nama = u.nama || 'Tanpa Nama';
       html += '<div class="res item-anggota" style="display:flex;justify-content:space-between;align-items:center;gap:10px">'
         + '<div style="overflow:hidden"><b>' + escA(nama) + '</b><br><span style="font-size:.85rem;color:var(--mute);word-break:break-all">' + (escA(email) || '-') + '</span></div>'
-        + (email ? '<button class="btn" type="button" data-agg="' + escA(email) + '">Beri PRO</button>' : '')
+        + (email ? '<button class="btn" type="button" data-agg="' + escA(email) + '">Lihat Anggota</button>' : '')
         + '</div>';
     });
     listEl.innerHTML = html || 'Belum ada anggota.';
