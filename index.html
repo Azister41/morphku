@@ -343,7 +343,7 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
     <button class="item" data-tip="Koleksi hewan"><svg class="i"><use href="#grid"/></svg><span class="lbl">Koleksi hewan</span></button>
     <button class="item" data-tip="Breeding"><svg class="i"><use href="#egg"/></svg><span class="lbl">Breeding</span></button>
     <button class="item" data-tip="Silsilah"><svg class="i"><use href="#tree"/></svg><span class="lbl">Silsilah</span></button>
-    <button class="item" data-tip="Support Me"><svg class="i"><use href="#leaf"/></svg><span class="lbl">☕ Support Me</span></button>
+    <button class="item" data-tip="Support Me"><svg class="i"><use href="#leaf"/></svg><span class="lbl"> Support Me</span></button>
     <button class="item" id="admBtn" data-tip="Admin" hidden><svg class="i"><use href="#shield"/></svg><span class="lbl">Admin</span></button>
     <button class="item" data-tip="Notifikasi"><svg class="i"><use href="#bell"/></svg><span class="lbl">Notifikasi</span><span class="badge" id="nbd" hidden>0</span></button>
     <hr>
@@ -369,7 +369,7 @@ body:not([data-auth="1"]) aside,body:not([data-auth="1"]) main,body:not([data-au
 </aside>
 
 <main>
-  <div class="top"><div class="hi" id="ttl">Beranda</div><button class="pro" id="plan" data-go="pro">☕ Support Me</button></div><div class="view" id="v-home">
+  <div class="top"><div class="hi" id="ttl">Beranda</div><button class="pro" id="plan" data-go="pro"> Support Me</button></div><div class="view" id="v-home">
   <section class="hero">
     <h1>Tebak anakan sebelum dikawinkan</h1>
     <p>Contoh: induk jantan Albino dengan betina Normal het Albino.</p>
@@ -722,12 +722,12 @@ const tgl = t => new Date(t).toLocaleString("id-ID", {day:"numeric", month:"shor
 
 function renderPlan(){
   const b = $("#plan");
-  b.textContent = "☕ Support Me";
+  b.textContent = " Support Me";
   b.classList.remove("free");
 }
 function renderQuota(){ renderNbd();
   const q = $("#quota");
-  q.innerHTML = `<span>✨ Semua fitur gratis — hitung tanpa batas, semua riwayat terbuka</span><button data-go="pro">☕ Support Me</button>`;
+  q.innerHTML = `<span> Semua fitur gratis</span><button data-go="pro"> Support Me</button>`;
 }
 const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rp = n => "Rp " + Number(n).toLocaleString("id-ID");
@@ -741,16 +741,16 @@ function renderPro(){
   // Semua fitur sudah gratis. Dukungan bersifat sukarela.
   const box = $("#pro");
   const wa = CFG.WA ? `<a class="btn" href="https://wa.me/${esc(CFG.WA)}" target="_blank" rel="noopener">Chat admin</a>` : "";
-  box.innerHTML = `<section class="hero"><h1>☕ Support Me — Secangkir Kopi</h1><p>Terima kasih sudah pakai Morphku! Semua fitur di aplikasi ini <b>100% gratis</b> — hitung tanpa batas, semua riwayat terbuka, dan Kalkulator AI terbuka untuk semua.</p>
+  box.innerHTML = `<section class="hero"><h1>Support Me — Secangkir Kopi</h1><p>Terima kasih sudah pakai Morphku! Semua fitur di aplikasi ini <b>100% gratis</b> — hitung tanpa batas, semua riwayat terbuka, dan Kalkulator AI terbuka untuk semua.</p>
     <ul class="perks"><li>✅ Hitungan tanpa batas setiap hari</li><li>✅ Riwayat sampai ${CFG.PRO_HIST} hitungan, semua terlihat</li><li>✅ Kalkulator AI Morph — gratis, tanpa kunci</li></ul></section>
     <div class="res" style="text-align:center"><b>Kalau Morphku membantu breeding kamu,</b><br><span style="color:var(--mute);font-size:.92rem">traktir aku secangkir kopi yuk — biar semangat update fitur baru. Dukungan ini sukarela, bukan untuk membuka fitur, karena semua sudah terbuka.</span></div>
     <div class="support-qris"><b>Scan QRIS di bawah ini</b><img src="${esc(CFG.QRIS_IMG)}" alt="QRIS Support Me — Secangkir Kopi"><span style="font-size:.9rem;color:var(--mute)">Nominal bebas, seikhlasnya. Scan pakai e-wallet / m-banking apa saja.</span></div>
-    <div class="support-steps"><ol><li>Buka e-wallet atau m-banking kamu, pilih <b>Scan QRIS</b>.</li><li>Scan kode di atas, isi nominal seikhlasnya.</li><li>Selesai! Terima kasih banyak 🙏</li></ol></div>
+    <div class="support-steps"><ol><li>Buka e-wallet atau m-banking kamu, pilih <b>Scan QRIS</b>.</li><li>Scan kode di atas, isi nominal seikhlasnya.</li><li>Selesai! Terima kasih banyak </li></ol></div>
     <div class="res" style="text-align:center"><div class="acts" style="justify-content:center">${wa}<button class="btn" data-go="calc" type="button">Kembali ke Hitung</button></div><div style="font-size:.85rem;color:var(--mute);margin-top:8px">Tidak wajib. Kalau belum bisa support, tetap pakai Morphku sepuasnya — gratis.</div></div>`;
 }
 
 // ----- Bayar lewat QRIS (NONAKTIF — semua gratis, diganti Support Me) -----
-function openBayar(id){ show("pro"); toast("Semua fitur sudah gratis — kalau mau support, scan QRIS di halaman ini ya ☕"); }
+function openBayar(id){ show("pro"); toast("Semua fitur sudah gratis — kalau mau support, scan QRIS di halaman ini ya "); }
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-plan]");
   if (a){ return show("pro"); }
@@ -1166,7 +1166,7 @@ function renderNbd(){ const d = dibaca(), n = notifList().filter(x => !d.include
 function renderNotif(){
   const l = notifList(), d = dibaca();
   $("#nlist").innerHTML = l.length ? l.map(n => `<button class="res nitem" data-ng="${esc(n.go)}" data-nid="${esc(n.id)}"><div class="t"><span>${esc(n.t)}</span>${d.includes(n.id) ? "" : '<i class="nd"></i>'}</div><div style="color:var(--mute);font-size:.88rem;font-weight:400">${esc(n.s)}</div></button>`).join("")
-    : '<div class="empty"><b>Belum ada notifikasi</b>Semua fitur gratis. Kalau mau support, cek menu ☕ Support Me.</div>';
+    : '<div class="empty"><b>Belum ada notifikasi</b>Semua fitur gratis. Kalau mau support, cek menu Support Me.</div>';
   $("#nall").hidden = !l.some(n => !d.includes(n.id));
   renderNbd();
 }
@@ -1362,7 +1362,7 @@ function renderBantuan(){
 
   <div class="sh">Semua Gratis & Support Me</div>
   ${q("Apakah Morphku masih ada paket PRO?", `<p>Tidak ada lagi. Semua fitur <b>100% gratis</b> — hitung tanpa batas, semua riwayat terlihat, dan Kalkulator AI terbuka untuk semua.</p>`)}
-  ${q("Cara support Secangkir Kopi", `<ol><li>Buka menu <b>☕ Support Me</b>.</li><li>Scan QRIS yang tampil, isi nominal seikhlasnya.</li><li>Selesai! Dukungan bersifat sukarela, bukan untuk membuka fitur.</li></ol><p>Terima kasih sudah support Morphku 🙏</p>`)}
+  ${q("Cara support Secangkir Kopi", `<ol><li>Buka menu <b> Support Me</b>.</li><li>Scan QRIS yang tampil, isi nominal seikhlasnya.</li><li>Selesai! Dukungan bersifat sukarela, bukan untuk membuka fitur.</li></ol><p>Terima kasih sudah support Morphku </p>`)}
 
   <div class="sh">Masih butuh bantuan?</div>
   <div class="res"><div style="font-size:.92rem">Kalau ada yang belum jelas atau ada hasil yang tampak janggal, hubungi admin.</div>${wa}</div>`;
@@ -1381,7 +1381,7 @@ function renderSet(){
   </div>
   <div class="sh">Semua Fitur Gratis</div><div class="res">
     <div>✨ Semua fitur terbuka — hitung tanpa batas, semua riwayat & AI gratis.</div>
-    <div class="acts"><button class="btn" data-go="pro" type="button">☕ Support Me — Secangkir Kopi</button>${CFG.WA ? `<a class="btn" href="https://wa.me/${CFG.WA}" target="_blank" rel="noopener">Chat admin</a>` : ""}</div>
+    <div class="acts"><button class="btn" data-go="pro" type="button"> Support Me — Secangkir Kopi</button>${CFG.WA ? `<a class="btn" href="https://wa.me/${CFG.WA}" target="_blank" rel="noopener">Chat admin</a>` : ""}</div>
   </div>
   <div class="sh">Data saya</div><div class="res">
     <div style="font-size:.9rem;color:var(--mute)">${getHist().length} riwayat, ${getKol().length} hewan</div>
